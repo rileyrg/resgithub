@@ -1,0 +1,64 @@
+#+TITLE: resgithub
+#+AUTHOR: rileyrg
+#+EMAIL: rileyrg at g m x dot de
+
+#+LANGUAGE: en
+#+STARTUP: overview
+
+#+EXPORT_FILE_NAME: README.md
+#+OPTIONS: toc:nil pri:t
+
+
+#+PROPERTY: header-args:bash :tangle-mode (identity #o555)
+
+* Reset local repo as if newly born. Push as new to github. Remote branches are maintained.
+
+#+begin_quote
+Note this does NOT remove remote branches.
+#+end_quote
+
+ALL *history _AND_ local branches* will be lost but your *.git/config*, *.git/info/exclude* and *.gitignore* will be maintained.
+
+** [[file:resgithub.sh][resgithub.sh]]
+
+ #+begin_src bash :tangle "resgithub.sh"
+   #!/usr/bin/bash
+   #Maintained in resgithub.org
+   tconfig=$(mktemp)
+   texclude=$(mktemp)
+   commitmsg=${1:-"git repository initialised"}
+   if [ -f .git/config ]; then
+       cp .git/config "$tconfig"
+       cp .git/info/exclude "$texclude"
+       rm -rf .git
+       git init .
+       mv "$tconfig" .git/config
+       mv "$texclude" .git/info/exclude
+       git add .
+       git commit -a -m "$commitmsg"
+       git push -f
+   else
+       echo "test Warning: No git config file found. Aborting.";exit;
+   fi
+ #+end_src
+
+
+
+** Tasks
+
+*** TODO [#A] dont do anything if it's a bare repo as everything will be gone!
+    :LOGBOOK:
+    - Note taken on [2021-04-07 Mi 13:17] \\
+      ,----
+      | <rgr_> How to tell (bash script) if the current repo is a bare repo?
+      | <ikke> git config core.base
+      | <ikke> git config core.bare
+      | <rgr_> thank you, I'll look that up
+      `----
+    - State "TODO"       from              [2021-04-07 Mi 13:14]
+    :END:
+
+*** TODO [#C] remove github references as is generic to all origins
+    :LOGBOOK:
+    - State "TODO"       from              [2021-04-07 Mi 13:02]
+    :END:
